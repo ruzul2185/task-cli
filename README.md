@@ -1,5 +1,5 @@
 # task-cli
-[task-cli]https://github.com/ruzul2185/task-cli
+[task-cli](https://github.com/ruzul2185/task-cli)
 **task cli** is a simple command-line task tracker writter in Rust.
 It allows you to manage and track tasks efficienly usinga lightweight JSON-based storage system.
 
