@@ -62,14 +62,14 @@ task-cli <command> [arguments]
 ## Commands
 
 
-| Command            | Arguments            | Description              |        |                              |
-| ------------------ | -------------------- | ------------------------ | ------ | ---------------------------- |
-| `add`              | `<description>`      | Add a new task           |        |                              |
-| `update`           | `<id> <description>` | Update task description  |        |                              |
-| `delete`           | `<id>`               | Delete a task            |        |                              |
-| `mark-in-progress` | `<id>`               | Mark task as in progress |        |                              |
-| `mark-done`        | `<id>`               | Mark task as done        |        |                              |
-| `list`             | `[todo               | in-progress              | done]` | List tasks (optional filter) |
+| Command            | Arguments            | Description                    |
+| ------------------ | -------------------- | ------------------------       |
+| `add`              | `<description>`      | Add a new task                 |
+| `update`           | `<id> <description>` | Update task description        |
+| `delete`           | `<id>`               | Delete a task                  |
+| `mark-in-progress` | `<id>`               | Mark task as in progress       |
+| `mark-done`        | `<id>`               | Mark task as done              |
+| `list`             | `_, todo, in-progress, done| in-progress              |
 
 
 ## Examples
