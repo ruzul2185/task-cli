@@ -5,6 +5,8 @@ It allows you to manage and track tasks efficienly usinga lightweight JSON-based
 
 ---
 
+Note: This program was made as a challenge from roadmap.sh.
+https://roadmap.sh/projects/task-tracker
 
 ## Features
 
