@@ -12,15 +12,6 @@ enum Status {
     Done,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Task {
-    id: usize,
-    description: String,
-    status: Status,
-    created_at: DateTime<Utc>,
-    updated_at: DateTime<Utc>,
-}
-
 impl fmt::Display for Status {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let status_str = match self {
@@ -30,6 +21,15 @@ impl fmt::Display for Status {
         };
         write!(f, "{}", status_str)
     }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Task {
+    id: usize,
+    description: String,
+    status: Status,
+    created_at: DateTime<Utc>,
+    updated_at: DateTime<Utc>,
 }
 
 impl Task {
@@ -42,6 +42,17 @@ impl Task {
             created_at: now,
             updated_at: now,
         }
+    }
+}
+
+impl fmt::Display for Task {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "ID: {}", self.id)?;
+        writeln!(f, "Description: {}", self.description)?;
+        writeln!(f, "Status: {}", self.status)?;
+        writeln!(f, "Created: {}", self.created_at)?;
+        writeln!(f, "Updated: {}", self.updated_at)?;
+        Ok(())
     }
 }
 
@@ -70,6 +81,11 @@ impl List {
         let list: String = fs::read_to_string(input)?;
         let list_json: List = serde_json::from_str(&list)?;
         Ok(list_json)
+    }
+
+    fn save(&self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
+        fs::write(path, serde_json::to_string_pretty(self)?)?;
+        Ok(())
     }
 }
 
@@ -134,7 +150,7 @@ fn show_list(arguments: &[String]) -> Result<(), Box<dyn std::error::Error>> {
     }
 
     for task in tasks_to_show {
-        println!("id: {},\ndescription: {},\nstatus: {},\ncreated_at: {},\nupdated_at: {}\n\n", task.id, task.description, task.status, task.created_at, task.updated_at);
+        println!("{task}\n");
     }
 
     Ok(())
@@ -158,7 +174,8 @@ fn mark_task_as_done(arguments: &[String]) -> Result<String, Box<dyn std::error:
     task.status = Status::Done;
     task.updated_at = Utc::now();
 
-    fs::write(LIST_FILE, serde_json::to_string_pretty(&list)?)?;
+    list.save(LIST_FILE)?;
+    // fs::write(LIST_FILE, serde_json::to_string_pretty(&list)?)?;
     Ok(format!("Task updated successfully (ID: {})", uuid))
 }
 
@@ -180,7 +197,8 @@ fn mark_task_as_in_progress(arguments: &[String]) -> Result<String, Box<dyn std:
     task.status = Status::InProgress;
     task.updated_at = Utc::now();
 
-    fs::write(LIST_FILE, serde_json::to_string_pretty(&list)?)?;
+    list.save(LIST_FILE)?;
+    // fs::write(LIST_FILE, serde_json::to_string_pretty(&list)?)?;
     Ok(format!("Task updated successfully (ID: {})", uuid))
 }
 
@@ -201,7 +219,8 @@ fn delete_task(arguments: &[String]) -> Result<String, Box<dyn std::error::Error
         return Err("Task not found. It may have been deleted or the id is invalid".into());
     }
 
-    fs::write(LIST_FILE, serde_json::to_string_pretty(&list)?)?;
+    list.save(LIST_FILE)?;
+    // fs::write(LIST_FILE, serde_json::to_string_pretty(&list)?)?;
     Ok(format!("Task deleted successfully (ID: {})", uuid))
 }
 
@@ -224,7 +243,8 @@ fn update_task(arguments: &[String]) -> Result<String, Box<dyn std::error::Error
     task.description = desc;
     task.updated_at = Utc::now();
 
-    fs::write(LIST_FILE, serde_json::to_string_pretty(&list)?)?;
+    list.save(LIST_FILE)?;
+    // fs::write(LIST_FILE, serde_json::to_string_pretty(&list)?)?;
     Ok(format!("Task updated successfully (ID: {})", uuid))
 }
 
@@ -238,7 +258,7 @@ fn add_task(arguments: &[String]) -> Result<String, Box<dyn std::error::Error>> 
     let new_task:Task = Task::new(uuid, arguments[0].to_owned());
     list.list.push(new_task);
     list.next_id += 1;
-    fs::write(LIST_FILE, serde_json::to_string_pretty(&list)?)?;
-    // println!("Task added successfully (ID: {uuid})"); 
+    list.save(LIST_FILE)?;
+    // fs::write(LIST_FILE, serde_json::to_string_pretty(&list)?)?;
     Ok(format!("Task added successfully (ID: {})", uuid))
 }
